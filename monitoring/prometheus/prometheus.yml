@@ -3,7 +3,7 @@ global:
 
 scrape_configs:
 
-  - job_name: "fastapi"
-    metrics_path: /metrics
+  - job_name: "ml-churn-api"
     static_configs:
-      - targets: ["api:8000"]
+      - targets:
+          - "api:8000"
