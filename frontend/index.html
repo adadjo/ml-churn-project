@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prédiction du churn - Opérateur télécom</title>
+  <style>
+    :root {
+      --bg: #f4f6fb; --card: #ffffff; --ink: #1b2430; --muted: #5b6778;
+      --brand: #2457c5; --ok: #1a7f4b; --ok-bg: #e6f4ec; --bad: #b3261e; --bad-bg: #fdecea;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+           background: var(--bg); color: var(--ink); }
+    main { max-width: 720px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+    .lead { color: var(--muted); margin: 0 0 1.25rem; }
+    form, #result { background: var(--card); border-radius: 12px; padding: 1.25rem;
+                    box-shadow: 0 1px 4px rgba(0, 0, 0, .1); }
+    form { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    label { display: flex; flex-direction: column; gap: .35rem; font-size: .9rem; font-weight: 600; }
+    input { padding: .6rem .7rem; border: 1px solid #c9d1de; border-radius: 8px; font-size: 1rem; }
+    input:focus-visible, button:focus-visible { outline: 3px solid var(--brand); outline-offset: 2px; }
+    button { grid-column: 1 / -1; padding: .8rem; border: 0; border-radius: 8px; background: var(--brand);
+             color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; }
+    button:disabled { opacity: .6; cursor: progress; }
+    #result { margin-top: 1.25rem; }
+    #result[data-state="CHURN"] { background: var(--bad-bg); border-left: 6px solid var(--bad); }
+    #result[data-state="NO_CHURN"] { background: var(--ok-bg); border-left: 6px solid var(--ok); }
+    #result[data-state="error"] { background: var(--bad-bg); border-left: 6px solid var(--bad); }
+    .verdict { font-size: 1.25rem; font-weight: 700; margin: 0 0 .5rem; }
+    dl { display: grid; grid-template-columns: max-content 1fr; gap: .25rem 1rem; margin: 0; }
+    dt { color: var(--muted); }
+    dd { margin: 0; font-weight: 600; }
+    @media (max-width: 520px) { form { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Prédiction du churn client</h1>
+  <p class="lead">Saisissez les données d'un client : le modèle (API <code>/predict</code>) estime son risque de départ.</p>
+
+  <form id="churn-form" novalidate>
+    <label>Âge (ans)
+      <input id="age" type="number" value="35" min="18" max="120" required>
+    </label>
+    <label>Ancienneté (mois)
+      <input id="anciennete" type="number" value="5" min="0" required>
+    </label>
+    <label>Revenu
+      <input id="revenu" type="number" value="450000" min="0" required>
+    </label>
+    <label>Nombre de réclamations
+      <input id="nb_reclamations" type="number" value="2" min="0" required>
+    </label>
+    <label>Montant mensuel
+      <input id="montant_mensuel" type="number" value="25000" min="0" required>
+    </label>
+    <label>Retards de paiement
+      <input id="retards_paiement" type="number" value="2" min="0" required>
+    </label>
+    <button id="predict-btn" type="submit">Prédire</button>
+  </form>
+
+  <section id="result" aria-live="polite" hidden>
+    <p class="verdict" id="verdict"></p>
+    <dl>
+      <dt>Prédiction</dt><dd id="prediction"></dd>
+      <dt>Probabilité de churn</dt><dd id="probability"></dd>
+      <dt>Version du modèle</dt><dd id="model-version"></dd>
+      <dt>Durée de l'appel</dt><dd id="duration"></dd>
+    </dl>
+  </section>
+</main>
+
+<script>
+  const FIELDS = ["age", "anciennete", "revenu", "nb_reclamations", "montant_mensuel", "retards_paiement"];
+  const form = document.getElementById("churn-form");
+  const button = document.getElementById("predict-btn");
+  const result = document.getElementById("result");
+
+  function show(state, verdict, values) {
+    result.hidden = false;
+    result.dataset.state = state;
+    document.getElementById("verdict").textContent = verdict;
+    for (const [id, text] of Object.entries(values)) {
+      document.getElementById(id).textContent = text;
+    }
+  }
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const payload = {};
+    for (const field of FIELDS) {
+      payload[field] = Number(document.getElementById(field).value);
+    }
+
+    button.disabled = true;
+    try {
+      const response = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if (!response.ok) {
+        throw new Error("L'API a répondu HTTP " + response.status);
+      }
+      const data = await response.json();
+      const percent = (data.probability * 100).toFixed(1) + " %";
+      const churn = data.prediction === "CHURN";
+      show(data.prediction,
+           churn ? "Risque de départ élevé" : "Client probablement fidèle",
+           { "prediction": data.prediction, "probability": percent,
+             "model-version": data.model_version, "duration": data.duration_ms + " ms" });
+      document.getElementById("probability").dataset.value = data.probability;
+    } catch (error) {
+      show("error", "Erreur : " + error.message,
+           { "prediction": "-", "probability": "-", "model-version": "-", "duration": "-" });
+    } finally {
+      button.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
