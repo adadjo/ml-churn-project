@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 import joblib
 import time
@@ -77,6 +78,10 @@ def predict(data: ClientData):
         "model_version": "1.0.0",
         "duration_ms": round(duration * 1000, 2)
     }
+
+
+# Interface Web (frontend/index.html) servie sur /ui/
+app.mount("/ui", StaticFiles(directory="frontend", html=True), name="ui")
 
 
 Instrumentator().instrument(app).expose(app)
