@@ -1,0 +1,51 @@
+{
+  "model_name": "Random Forest",
+  "model_type": "RandomForestClassifier",
+  "model_version": "1.0.0",
+  "trained_at": "2026-10-06T02:53:58+00:00",
+  "features": [
+    "age",
+    "anciennete",
+    "revenu",
+    "nb_reclamations",
+    "montant_mensuel",
+    "retards_paiement"
+  ],
+  "target": "churn",
+  "train_size": 1600,
+  "test_size": 400,
+  "dataset_sha256": "a703abb4df692a74cccc257130bebfabae069074c5d998f11e3dabe3c06cde1b",
+  "sklearn_version": "1.9.1",
+  "python_version": "3.12.3",
+  "selected_model": "random_forest",
+  "metrics": {
+    "accuracy": 0.605,
+    "precision": 0.5514705882352942,
+    "recall": 0.436046511627907,
+    "f1": 0.487012987012987,
+    "roc_auc": 0.624719502243982
+  },
+  "all_models_metrics": {
+    "logistic_regression": {
+      "accuracy": 0.625,
+      "precision": 0.582089552238806,
+      "recall": 0.45348837209302323,
+      "f1": 0.5098039215686274,
+      "roc_auc": 0.6364494084047327
+    },
+    "decision_tree": {
+      "accuracy": 0.6325,
+      "precision": 0.5827814569536424,
+      "recall": 0.5116279069767442,
+      "f1": 0.544891640866873,
+      "roc_auc": 0.6233042635658914
+    },
+    "random_forest": {
+      "accuracy": 0.605,
+      "precision": 0.5514705882352942,
+      "recall": 0.436046511627907,
+      "f1": 0.487012987012987,
+      "roc_auc": 0.624719502243982
+    }
+  }
+}
