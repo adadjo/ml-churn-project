@@ -1,0 +1,21 @@
+{
+  "label": "500 utilisateurs",
+  "users": 500,
+  "ramp_up_s": 10.0,
+  "loops": 10,
+  "samples": 5000,
+  "average_ms": 9043.8,
+  "median_ms": 9414.3,
+  "p90_ms": 12489.3,
+  "p95_ms": 14795.6,
+  "p99_ms": 18021.3,
+  "min_ms": 52.4,
+  "max_ms": 25023.0,
+  "error_count": 1,
+  "error_pct": 0.02,
+  "error_codes": {
+    "ReadError": 1
+  },
+  "duration_s": 108.1,
+  "throughput_rps": 46.2
+}

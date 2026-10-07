@@ -1,0 +1,12 @@
+{
+  "total_predictions": 15887.0,
+  "mean_inference_s": 0.20516973191017818,
+  "p95_inference_s": 0.6487811484290356,
+  "predict_requests": 15858.0,
+  "http_5xx": null,
+  "mean_inference_ms": 205.2,
+  "p95_inference_ms": 648.8,
+  "idle_median_ms": 11.0,
+  "idle_p95_ms": 14.6,
+  "calls": 40
+}
