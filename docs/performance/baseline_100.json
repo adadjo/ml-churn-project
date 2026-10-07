@@ -1,0 +1,19 @@
+{
+  "label": "Référence énoncé - 100 utilisateurs",
+  "users": 100,
+  "ramp_up_s": 10.0,
+  "loops": 10,
+  "samples": 1000,
+  "average_ms": 1872.3,
+  "median_ms": 1992.9,
+  "p90_ms": 2785.8,
+  "p95_ms": 2997.6,
+  "p99_ms": 3354.8,
+  "min_ms": 23.7,
+  "max_ms": 3775.8,
+  "error_count": 0,
+  "error_pct": 0.0,
+  "error_codes": {},
+  "duration_s": 29.1,
+  "throughput_rps": 34.3
+}

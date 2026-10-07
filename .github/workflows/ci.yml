@@ -1,0 +1,71 @@
+name: CI ML Churn
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+
+  test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installation
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Tests
+        run: |
+          pytest
+
+  docker:
+
+    # Build de l'image et test d'intégration sur le conteneur réel
+    needs: test
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build de l'image Docker
+        run: docker build -t ml-churn-api:ci .
+
+      - name: Démarrage du conteneur
+        run: docker run -d --name ml-churn-api -p 8000:8000 ml-churn-api:ci
+
+      - name: Test d'intégration (health + prédiction)
+        run: |
+          for i in $(seq 1 30); do
+            curl -fs http://localhost:8000/health && break
+            sleep 2
+          done
+          curl -fs http://localhost:8000/health
+          curl -fs -X POST http://localhost:8000/predict \
+            -H "Content-Type: application/json" \
+            -d '{"age": 35, "anciennete": 5, "revenu": 450000, "nb_reclamations": 2, "montant_mensuel": 25000, "retards_paiement": 2}'
+
+      - name: Logs du conteneur (en cas d'échec)
+        if: failure()
+        run: docker logs ml-churn-api
