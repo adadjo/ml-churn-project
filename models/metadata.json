@@ -2,7 +2,7 @@
   "model_name": "Random Forest",
   "model_type": "RandomForestClassifier",
   "model_version": "1.0.0",
-  "trained_at": "2026-10-06T02:53:58+00:00",
+  "trained_at": "2026-11-07T06:46:55+00:00",
   "features": [
     "age",
     "anciennete",
@@ -14,9 +14,9 @@
   "target": "churn",
   "train_size": 1600,
   "test_size": 400,
-  "dataset_sha256": "a703abb4df692a74cccc257130bebfabae069074c5d998f11e3dabe3c06cde1b",
+  "dataset_sha256": "9d6678653eb6109afdd66d602192984cef041644c91d9b18099fc25a58933fb6",
   "sklearn_version": "1.9.1",
-  "python_version": "3.12.3",
+  "python_version": "3.13.7",
   "selected_model": "random_forest",
   "metrics": {
     "accuracy": 0.605,
